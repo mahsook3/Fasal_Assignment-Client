@@ -1,30 +1,30 @@
-import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
-import { Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../contexts/user.context';
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../contexts/user.context";
 
 const popularMovies = [
-  'The Shawshank Redemption',
-  'The Godfather',
-  'The Dark Knight',
-  'Pulp Fiction',
-  'The Lord of the Rings: The Return of the King',
-  'Forrest Gump',
-  'Inception',
-  'Fight Club',
-  'The Matrix',
-  'Goodfellas'
+  "The Shawshank Redemption",
+  "The Godfather",
+  "The Dark Knight",
+  "Pulp Fiction",
+  "The Lord of the Rings: The Return of the King",
+  "Forrest Gump",
+  "Inception",
+  "Fight Club",
+  "The Matrix",
+  "Goodfellas",
 ];
 
 const MovieList = () => {
   const { user } = useContext(UserContext);
   console.log(user.profile.email);
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [movies, setMovies] = useState([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [playlistMovies, setPlaylistMovies] = useState([]);
   const { logOutUser } = useContext(UserContext);
   const navigate = useNavigate();
@@ -32,27 +32,35 @@ const MovieList = () => {
   useEffect(() => {
     const fetchPlaylistMovies = async () => {
       try {
-        const response = await axios.get(`https://fasal-assignment-server-mu.vercel.app/api/movieLists/${user.profile.email}`);
+        const response = await axios.get(
+          `https://fasal-assignment-server-mu.vercel.app/api/movieLists/${user.profile.email}`
+        );
         const playlists = response.data;
-        const playlistMoviesData = playlists.flatMap(playlist => playlist.movies);
+        const playlistMoviesData = playlists.flatMap(
+          (playlist) => playlist.movies
+        );
         setPlaylistMovies(playlistMoviesData);
       } catch (err) {
-        setError('Failed to fetch playlist movies from the API');
+        setError("Failed to fetch playlist movies from the API");
       }
     };
 
     const fetchPopularMovies = async () => {
       try {
-        const moviePromises = popularMovies.map(title =>
-          axios.get(`https://www.omdbapi.com/?apikey=43c21e83&t=${encodeURIComponent(title)}`)
+        const moviePromises = popularMovies.map((title) =>
+          axios.get(
+            `https://www.omdbapi.com/?apikey=43c21e83&t=${encodeURIComponent(
+              title
+            )}`
+          )
         );
         const movieResponses = await Promise.all(moviePromises);
         const popularMoviesData = movieResponses
-          .map(response => response.data)
-          .filter(movie => movie.Response === "True");
+          .map((response) => response.data)
+          .filter((movie) => movie.Response === "True");
         setMovies(popularMoviesData);
       } catch (err) {
-        setError('Failed to fetch popular movies from the API');
+        setError("Failed to fetch popular movies from the API");
       }
     };
 
@@ -73,16 +81,18 @@ const MovieList = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`https://www.omdbapi.com/?apikey=43c21e83&s=${searchTerm}`);
+      const response = await axios.get(
+        `https://www.omdbapi.com/?apikey=43c21e83&s=${searchTerm}`
+      );
       if (response.data.Response === "True") {
         setSearchResults(response.data.Search);
-        setError('');
+        setError("");
       } else {
         setSearchResults([]);
         setError(response.data.Error);
       }
     } catch (err) {
-      setError('Failed to fetch data from the API');
+      setError("Failed to fetch data from the API");
     }
   };
 
@@ -92,15 +102,18 @@ const MovieList = () => {
 
   const handleAddToPlaylist = async (movie) => {
     try {
-      await axios.post('https://fasal-assignment-server-mu.vercel.app/api/movieLists', {
-        userId: user.profile.email,
-        name: 'My Playlist',
-        movies: [movie]
-      });
-      alert('Movie added to your playlist!');
+      await axios.post(
+        "https://fasal-assignment-server-mu.vercel.app/api/movieLists",
+        {
+          userId: user.profile.email,
+          name: "My Playlist",
+          movies: [movie],
+        }
+      );
+      alert("Movie added to your playlist!");
     } catch (err) {
-      console.error('Error adding movie to playlist:', err.message);
-      alert('Failed to add movie to your playlist. Please try again.');
+      console.error("Error adding movie to playlist:", err.message);
+      alert("Failed to add movie to your playlist. Please try again.");
     }
   };
 
@@ -111,10 +124,18 @@ const MovieList = () => {
   return (
     <div className="movie-list p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-end mb-6">
-        <Button variant="contained" onClick={logOut} className="mb-4 bg-blue-600 hover:bg-blue-700">Logout</Button>
+        <Button
+          variant="contained"
+          onClick={logOut}
+          className="mb-4 bg-blue-600 hover:bg-blue-700"
+        >
+          Logout
+        </Button>
       </div>
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Movie Search</h1>
-  
+      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
+        Movie Search
+      </h1>
+
       <div className="flex justify-center mb-6">
         <input
           type="text"
@@ -123,11 +144,17 @@ const MovieList = () => {
           placeholder="Search for a movie..."
           className="p-3 border rounded-l-lg mr-0 w-2/3 sm:w-1/2 md:w-1/3"
         />
-        <Button variant="contained" onClick={handleSearch} className="rounded-r-lg bg-blue-600 hover:bg-blue-700">Search</Button>
+        <Button
+          variant="contained"
+          onClick={handleSearch}
+          className="rounded-r-lg bg-blue-600 hover:bg-blue-700"
+        >
+          Search
+        </Button>
       </div>
-  
+
       {error && <p className="text-red-600 mb-6 text-center">{error}</p>}
-  
+
       {searchResults.length > 0 ? (
         <div className="movies grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           {searchResults.map((movie) => (
@@ -172,11 +199,13 @@ const MovieList = () => {
         <>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-gray-800">My Playlist</h2>
-            <button 
+            <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               onClick={() => {
-                navigator.clipboard.writeText(`http://localhost:3000/publicplaylist/${user.profile.email}`);
-                alert('URL has been copied to clipboard!');
+                navigator.clipboard.writeText(
+                  `http://localhost:3000/publicplaylist/${user.profile.email}`
+                );
+                alert("URL has been copied to clipboard!");
               }}
             >
               Make a Shareable Link
@@ -215,7 +244,9 @@ const MovieList = () => {
             ))}
           </div>
 
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Popular Movies</h2>
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">
+            Popular Movies
+          </h2>
           <div className="movies grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {movies.map((movie) => (
               <div
