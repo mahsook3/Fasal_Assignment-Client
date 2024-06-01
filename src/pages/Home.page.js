@@ -44,7 +44,7 @@ const MovieList = () => {
     const fetchPopularMovies = async () => {
       try {
         const moviePromises = popularMovies.map(title =>
-          axios.get(`http://www.omdbapi.com/?apikey=43c21e83&t=${encodeURIComponent(title)}`)
+          axios.get(`https://www.omdbapi.com/?apikey=43c21e83&t=${encodeURIComponent(title)}`)
         );
         const movieResponses = await Promise.all(moviePromises);
         const popularMoviesData = movieResponses
@@ -73,7 +73,7 @@ const MovieList = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`http://www.omdbapi.com/?apikey=43c21e83&s=${searchTerm}`);
+      const response = await axios.get(`https://www.omdbapi.com/?apikey=43c21e83&s=${searchTerm}`);
       if (response.data.Response === "True") {
         setSearchResults(response.data.Search);
         setError('');
