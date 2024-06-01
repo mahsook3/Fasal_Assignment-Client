@@ -3,6 +3,8 @@ import axios from "axios";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/user.context";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const popularMovies = [
   "The Shawshank Redemption",
@@ -73,9 +75,10 @@ const MovieList = () => {
       const loggedOut = await logOutUser();
       if (loggedOut) {
         window.location.reload(true);
+        toast.success("Logged out successfully!");
       }
     } catch (error) {
-      alert(error);
+      toast.error("An error occurred. Please try again later.");
     }
   };
 
@@ -110,10 +113,10 @@ const MovieList = () => {
           movies: [movie],
         }
       );
-      alert("Movie added to your playlist!");
+      toast.success("Movie added to playlist successfully!");
     } catch (err) {
       console.error("Error adding movie to playlist:", err.message);
-      alert("Failed to add movie to your playlist. Please try again.");
+      toast.error("Failed to add movie to playlist");
     }
   };
 
@@ -123,6 +126,7 @@ const MovieList = () => {
 
   return (
     <div className="movie-list p-6 bg-gray-50 min-h-screen">
+              <ToastContainer />
       <div className="flex justify-end mb-6">
         <Button
           variant="contained"
@@ -157,43 +161,45 @@ const MovieList = () => {
 
       {searchResults.length > 0 ? (
         <div className="movies grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-          {searchResults.map((movie) => (
-            <div
-              key={movie.imdbID}
-              className="relative flex flex-col rounded-xl bg-white shadow-md transform transition-transform duration-500 hover:scale-105 w-64"
-            >
-              <div className="relative mx-2 mt-2 h-64 overflow-hidden rounded-xl">
-                <img
-                  src={movie.Poster}
-                  alt={movie.Title}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="p-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <p className="font-semibold text-gray-900">{movie.Title}</p>
-                  <p className="font-medium text-gray-700">{movie.Year}</p>
-                </div>
-                <p className="text-sm text-gray-600">{movie.Plot}</p>
-              </div>
-              <div className="p-3 pt-0 flex justify-between">
-                <button
-                  className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-1"
-                  type="button"
-                  onClick={() => handleViewDetails(movie.imdbID)}
-                >
-                  View Details
-                </button>
-                <button
-                  className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ml-1"
-                  type="button"
-                  onClick={() => handleAddToPlaylist(movie)}
-                >
-                  Add to Playlist
-                </button>
-              </div>
-            </div>
-          ))}
+{searchResults.map((movie) => (
+  <div
+    key={movie.imdbID}
+    className="relative flex flex-col justify-between rounded-xl bg-white shadow-md transform transition-transform duration-500 hover:scale-105 w-64"
+  >
+    <div>
+      <div className="relative mx-2 mt-2 h-64 overflow-hidden rounded-xl">
+        <img
+          src={movie.Poster}
+          alt={movie.Title}
+          className="h-full w-full object-cover"
+        />
+      </div>
+      <div className="p-3">
+        <div className="mb-2 flex items-center justify-between">
+          <p className="font-semibold text-gray-900">{movie.Title}</p>
+          <p className="font-medium text-gray-700">{movie.Year}</p>
+        </div>
+        <p className="text-sm text-gray-600">{movie.Plot}</p>
+      </div>
+    </div>
+    <div className="p-3 pt-0 flex justify-between">
+      <button
+        className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-1"
+        type="button"
+        onClick={() => handleViewDetails(movie.imdbID)}
+      >
+        View Details
+      </button>
+      <button
+        className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ml-1"
+        type="button"
+        onClick={() => handleAddToPlaylist(movie)}
+      >
+        Add to Playlist
+      </button>
+    </div>
+  </div>
+))}
         </div>
       ) : (
         <>
@@ -203,88 +209,92 @@ const MovieList = () => {
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               onClick={() => {
                 navigator.clipboard.writeText(
-                  `http://localhost:3000/publicplaylist/${user.profile.email}`
+                  `https://fasal-sece.vercel.app/publicplaylist/${user.profile.email}`
                 );
-                alert("URL has been copied to clipboard!");
+                toast.success("Link copied to clipboard!");
               }}
             >
               Make a Shareable Link
             </button>
           </div>
           <div className="movies grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-            {playlistMovies.map((movie) => (
-              <div
-                key={movie.imdbID}
-                className="relative flex flex-col rounded-xl bg-white shadow-md transform transition-transform duration-500 hover:scale-105 w-64"
-              >
-                <div className="relative mx-2 mt-2 h-64 overflow-hidden rounded-xl">
-                  <img
-                    src={movie.Poster}
-                    alt={movie.Title}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="p-3">
-                  <div className="mb-2 flex items-center justify-between">
-                    <p className="font-semibold text-gray-900">{movie.Title}</p>
-                    <p className="font-medium text-gray-700">{movie.Year}</p>
-                  </div>
-                  <p className="text-sm text-gray-600">{movie.Plot}</p>
-                </div>
-                <div className="p-3 pt-0 flex justify-between">
-                  <button
-                    className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-1"
-                    type="button"
-                    onClick={() => handleViewDetails(movie.imdbID)}
-                  >
-                    View Details
-                  </button>
-                </div>
-              </div>
-            ))}
+          {playlistMovies.map((movie) => (
+  <div
+    key={movie.imdbID}
+    className="relative flex flex-col justify-between rounded-xl bg-white shadow-md transform transition-transform duration-500 hover:scale-105 w-64"
+  >
+    <div>
+      <div className="relative mx-2 mt-2 h-64 overflow-hidden rounded-xl">
+        <img
+          src={movie.Poster}
+          alt={movie.Title}
+          className="h-full w-full object-cover"
+        />
+      </div>
+      <div className="p-3">
+        <div className="mb-2 flex items-center justify-between">
+          <p className="font-semibold text-gray-900">{movie.Title}</p>
+          <p className="font-medium text-gray-700">{movie.Year}</p>
+        </div>
+        <p className="text-sm text-gray-600">{movie.Plot}</p>
+      </div>
+    </div>
+    <div className="p-3 pt-0 flex justify-end">
+      <button
+        className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-1"
+        type="button"
+        onClick={() => handleViewDetails(movie.imdbID)}
+      >
+        View Details
+      </button>
+    </div>
+  </div>
+))}
           </div>
 
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
             Popular Movies
           </h2>
           <div className="movies grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {movies.map((movie) => (
-              <div
-                key={movie.imdbID}
-                className="relative flex flex-col rounded-xl bg-white shadow-md transform transition-transform duration-500 hover:scale-105 w-64"
-              >
-                <div className="relative mx-2 mt-2 h-64 overflow-hidden rounded-xl">
-                  <img
-                    src={movie.Poster}
-                    alt={movie.Title}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="p-3">
-                  <div className="mb-2 flex items-center justify-between">
-                    <p className="font-semibold text-gray-900">{movie.Title}</p>
-                    <p className="font-medium text-gray-700">{movie.Year}</p>
-                  </div>
-                  <p className="text-sm text-gray-600">{movie.Plot}</p>
-                </div>
-                <div className="p-3 pt-0 flex justify-between">
-                  <button
-                    className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-1"
-                    type="button"
-                    onClick={() => handleViewDetails(movie.imdbID)}
-                  >
-                    View Details
-                  </button>
-                  <button
-                    className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ml-1"
-                    type="button"
-                    onClick={() => handleAddToPlaylist(movie)}
-                  >
-                    Add to Playlist
-                  </button>
-                </div>
-              </div>
-            ))}
+          {movies.map((movie) => (
+  <div
+    key={movie.imdbID}
+    className="relative flex flex-col justify-between rounded-xl bg-white shadow-md transform transition-transform duration-500 hover:scale-105 w-64"
+  >
+    <div>
+      <div className="relative mx-2 mt-2 h-64 overflow-hidden rounded-xl">
+        <img
+          src={movie.Poster}
+          alt={movie.Title}
+          className="h-full w-full object-cover"
+        />
+      </div>
+      <div className="p-3">
+        <div className="mb-2 flex items-center justify-between">
+          <p className="font-semibold text-gray-900">{movie.Title}</p>
+          <p className="font-medium text-gray-700">{movie.Year}</p>
+        </div>
+        <p className="text-sm text-gray-600">{movie.Plot}</p>
+      </div>
+    </div>
+    <div className="p-3 pt-0 flex justify-between">
+      <button
+        className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-1"
+        type="button"
+        onClick={() => handleViewDetails(movie.imdbID)}
+      >
+        View Details
+      </button>
+      <button
+        className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ml-1"
+        type="button"
+        onClick={() => handleAddToPlaylist(movie)}
+      >
+        Add to Playlist
+      </button>
+    </div>
+  </div>
+))}
           </div>
         </>
       )}
