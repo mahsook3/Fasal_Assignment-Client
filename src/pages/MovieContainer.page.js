@@ -85,7 +85,7 @@ const MovieContainer = () => {
     const fetchMovieDetails = async () => {
       try {
         const response = await axios.get(
-          `http://www.omdbapi.com/?apikey=43c21e83&i=${imdbID}`
+          `https://www.omdbapi.com/?apikey=43c21e83&i=${imdbID}`
         );
         if (response.data.Response === "True") {
           setMovie(response.data);
@@ -96,7 +96,7 @@ const MovieContainer = () => {
         setError("Failed to fetch movie details from the API");
       }
     };
-
+  
     fetchMovieDetails();
   }, [imdbID]);
 

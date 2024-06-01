@@ -105,13 +105,42 @@ const MovieList = () => {
 
   const handleAddToPlaylist = async (movie) => {
     try {
+      const playlistData = {
+        userId: user.profile.email,
+        name: "My Playlist",
+        movies: [movie], // Ensure that the movie object is in the required format by the server
+      };
       await axios.post(
         "https://fasal-assignment-server-mu.vercel.app/api/movieLists",
-        {
-          userId: user.profile.email,
-          name: "My Playlist",
-          movies: [movie],
-        }
+        playlistData
+      );
+      toast.success("Movie added to playlist successfully!");
+    } catch (err) {
+      console.error("Error adding movie to playlist:", err.message);
+      toast.error("Failed to add movie to playlist");
+    }
+  };
+
+  const handleAddToPlaylist1 = async (movie1) => {
+    try {
+      const playlistData = {
+        userId: user.profile.email,
+        name: "My Playlist",
+        movies: [
+          {
+            imdbID: movie1.imdbID,
+            Poster: movie1.Poster,
+            Title: movie1.Title,
+            Year: movie1.Year,
+            Genre: movie1.Genre || "N/A", // Fallback in case Genre is undefined
+            Director: movie1.Director || "N/A", // Fallback in case Director is undefined
+            Plot: movie1.Plot || "N/A", // Fallback in case Plot is undefined
+          },
+        ],
+      };
+      await axios.post(
+        "https://fasal-assignment-server-mu.vercel.app/api/movieLists",
+        playlistData
       );
       toast.success("Movie added to playlist successfully!");
     } catch (err) {
@@ -161,42 +190,43 @@ const MovieList = () => {
 
       {searchResults.length > 0 ? (
         <div className="movies grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-{searchResults.map((movie) => (
+          {searchResults.map((movie1) => (
   <div
-    key={movie.imdbID}
+    key={movie1.imdbID}
     className="relative flex flex-col justify-between rounded-xl bg-white shadow-md transform transition-transform duration-500 hover:scale-105 w-64"
   >
     <div>
       <div className="relative mx-2 mt-2 h-64 overflow-hidden rounded-xl">
         <img
-          src={movie.Poster}
-          alt={movie.Title}
+          src={movie1.Poster}
+          alt={movie1.Title}
           className="h-full w-full object-cover"
         />
       </div>
       <div className="p-3">
         <div className="mb-2 flex items-center justify-between">
-          <p className="font-semibold text-gray-900">{movie.Title}</p>
-          <p className="font-medium text-gray-700">{movie.Year}</p>
+          <p className="font-semibold text-gray-900">{movie1.Title}</p>
+          <p className="font-medium text-gray-700">{movie1.Year}</p>
         </div>
-        <p className="text-sm text-gray-600">{movie.Plot}</p>
+        <p className="text-sm text-gray-600">{movie1.Plot}</p>
       </div>
     </div>
     <div className="p-3 pt-0 flex justify-between">
       <button
         className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-1"
         type="button"
-        onClick={() => handleViewDetails(movie.imdbID)}
+        onClick={() => handleViewDetails(movie1.imdbID)}
       >
         View Details
       </button>
       <button
-        className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ml-1"
-        type="button"
-        onClick={() => handleAddToPlaylist(movie)}
-      >
-        Add to Playlist
-      </button>
+  className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ml-1"
+  type="button"
+  onClick={() => handleAddToPlaylist1(movie1)}
+>
+  Add to Playlist
+</button>
+
     </div>
   </div>
 ))}
@@ -218,39 +248,43 @@ const MovieList = () => {
             </button>
           </div>
           <div className="movies grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-          {playlistMovies.map((movie) => (
-  <div
-    key={movie.imdbID}
-    className="relative flex flex-col justify-between rounded-xl bg-white shadow-md transform transition-transform duration-500 hover:scale-105 w-64"
-  >
-    <div>
-      <div className="relative mx-2 mt-2 h-64 overflow-hidden rounded-xl">
-        <img
-          src={movie.Poster}
-          alt={movie.Title}
-          className="h-full w-full object-cover"
-        />
-      </div>
-      <div className="p-3">
-        <div className="mb-2 flex items-center justify-between">
-          <p className="font-semibold text-gray-900">{movie.Title}</p>
-          <p className="font-medium text-gray-700">{movie.Year}</p>
-        </div>
-        <p className="text-sm text-gray-600">{movie.Plot}</p>
-      </div>
-    </div>
-    <div className="p-3 pt-0 flex justify-end">
-      <button
-        className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-1"
-        type="button"
-        onClick={() => handleViewDetails(movie.imdbID)}
+  {playlistMovies.length > 0 ? (
+    playlistMovies.map((movie) => (
+      <div
+        key={movie.imdbID}
+        className="relative flex flex-col justify-between rounded-xl bg-white shadow-md transform transition-transform duration-500 hover:scale-105 w-64"
       >
-        View Details
-      </button>
-    </div>
-  </div>
-))}
+        <div>
+          <div className="relative mx-2 mt-2 h-64 overflow-hidden rounded-xl">
+            <img
+              src={movie.Poster}
+              alt={movie.Title}
+              className="h-full w-full object-cover"
+            />
           </div>
+          <div className="p-3">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="font-semibold text-gray-900">{movie.Title}</p>
+              <p className="font-medium text-gray-700">{movie.Year}</p>
+            </div>
+            <p className="text-sm text-gray-600">{movie.Plot}</p>
+          </div>
+        </div>
+        <div className="p-3 pt-0 flex justify-end">
+          <button
+            className="block w-full rounded-lg bg-blue-600 py-2 px-4 text-center text-xs font-bold uppercase text-white transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-1"
+            type="button"
+            onClick={() => handleViewDetails(movie.imdbID)}
+          >
+            View Details
+          </button>
+        </div>
+      </div>
+    ))
+  ) : (
+    <p>Please make a playlist to see your playlist</p>
+  )}
+</div>
 
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
             Popular Movies
