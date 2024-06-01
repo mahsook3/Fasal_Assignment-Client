@@ -32,7 +32,7 @@ const MovieList = () => {
   useEffect(() => {
     const fetchPlaylistMovies = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/api/movieLists/${user.profile.email}`);
+        const response = await axios.get(`https://fasal-assignment-server-mu.vercel.app/api/movieLists/${user.profile.email}`);
         const playlists = response.data;
         const playlistMoviesData = playlists.flatMap(playlist => playlist.movies);
         setPlaylistMovies(playlistMoviesData);
@@ -92,7 +92,7 @@ const MovieList = () => {
 
   const handleAddToPlaylist = async (movie) => {
     try {
-      await axios.post('http://localhost:4000/api/movieLists', {
+      await axios.post('https://fasal-assignment-server-mu.vercel.app/api/movieLists', {
         userId: user.profile.email,
         name: 'My Playlist',
         movies: [movie]

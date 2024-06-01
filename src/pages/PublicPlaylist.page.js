@@ -11,7 +11,7 @@ const PublicPlaylist = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/api/movieLists/${mailid}`);
+        const response = await axios.get(`https://fasal-assignment-server-mu.vercel.app/api/movieLists/${mailid}`);
         setPublicPlaylists(response.data);
         setLoading(false);
       } catch (error) {

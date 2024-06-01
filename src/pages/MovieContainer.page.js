@@ -71,7 +71,7 @@ const MovieContainer = () => {
 
   const handleAddToPlaylist = async () => {
     try {
-      await axios.post('http://localhost:4000/api/movieLists', {
+      await axios.post('https://fasal-assignment-server-mu.vercel.app/api/movieLists', {
         userId: user.profile.email,
         name: 'My Playlist',
         movies: [movie]
